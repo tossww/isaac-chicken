@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #0c1445; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+  background-image: url('bg-gradient.png'); background-size: cover;
+}
+.header { margin: 25pt 40pt 0 40pt; }
+.tag { display: inline-block; background: #4488CC; padding: 4pt 12pt; margin-bottom: 8pt; border-radius: 3pt; }
+.body-area { margin: 10pt 40pt 0 40pt; display: flex; flex-direction: row; gap: 25pt; }
+.desc { flex: 1.2; }
+.changes { flex: 1; }
+.change-item { background: rgba(68,136,204,0.15); padding: 8pt 10pt; margin-bottom: 6pt; border-left: 3pt solid #4488CC; }
+.bottom { margin: 10pt 40pt 20pt 40pt; display: flex; flex-direction: row; gap: 20pt; }
+.meta-box { flex: 1; background: rgba(255,255,255,0.06); padding: 10pt 12pt; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="tag"><p style="color: #FFFFFF; font-size: 10pt; margin: 0;">OPTION 1</p></div>
+  <h1 style="color: #FFFFFF; font-size: 26pt; margin: 5pt 0 0 0;">Gradient Sky + Parallax</h1>
+  <p style="color: #88BBEE; font-size: 13pt; margin: 3pt 0 0 0;">Atmospheric &amp; Polished</p>
+</div>
+<div class="body-area">
+  <div class="desc">
+    <p style="color: #CCDDEE; font-size: 11pt; margin: 0; line-height: 1.5;">Smooth multi-color sky gradients replace flat backgrounds. 2-3 parallax scrolling layers add depth — distant clouds move slowly, mid-ground hills at medium speed, foreground details scroll fastest. Each level keeps its mood but feels alive.</p>
+  </div>
+  <div class="changes">
+    <p style="color: #88BBEE; font-size: 10pt; margin: 0 0 6pt 0;"><b>KEY CHANGES</b></p>
+    <div class="change-item"><p style="color: #CCDDEE; font-size: 10pt; margin: 0;">Backgrounds become linear gradients</p></div>
+    <div class="change-item"><p style="color: #CCDDEE; font-size: 10pt; margin: 0;">2-3 scrolling depth layers</p></div>
+    <div class="change-item"><p style="color: #CCDDEE; font-size: 10pt; margin: 0;">Ground gets gradient shading</p></div>
+    <div class="change-item"><p style="color: #CCDDEE; font-size: 10pt; margin: 0;">Decorations sorted by depth</p></div>
+  </div>
+</div>
+<div class="bottom">
+  <div class="meta-box">
+    <p style="color: #66DD88; font-size: 10pt; margin: 0;"><b>EFFORT: LOW</b></p>
+    <p style="color: #999999; font-size: 9pt; margin: 4pt 0 0 0;">Mostly fillRect to createLinearGradient + layered scrolling</p>
+  </div>
+  <div class="meta-box">
+    <p style="color: #88BBEE; font-size: 10pt; margin: 0;"><b>BEST FOR</b></p>
+    <p style="color: #999999; font-size: 9pt; margin: 4pt 0 0 0;">Making the game feel "real" and immersive</p>
+  </div>
+  <div class="meta-box">
+    <p style="color: #FFD700; font-size: 10pt; margin: 0;"><b>INSPIRATION</b></p>
+    <p style="color: #999999; font-size: 9pt; margin: 4pt 0 0 0;">Alto's Adventure, Tiny Wings, classic side-scrollers</p>
+  </div>
+</div>
+</body>
+</html>
