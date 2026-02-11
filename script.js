@@ -225,50 +225,191 @@ const GDAudio = {
     },
 
     // --- MUSIC SYSTEM (Step Sequencer) ---
+    // 20 unique level music configs — each level has its own key, tempo, patterns, and timbre
+    _levelConfigs: [
+        // Lvl 1 — Neon Genesis: driving electronic, C minor
+        { bpm: 128, scale: [130.81,146.83,155.56,174.61,196.00,207.65,233.08],
+          melody:  [0,2,4,5, -1,3,5,6, 4,2,0,3, -1,5,4,2],
+          bass:    [0,-1,0,-1, 3,-1,3,-1, 4,-1,4,-1, 3,-1,0,-1],
+          kick:    [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+          hat:     [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'square', bassWave:'sawtooth', bassFilter:400, leadOct:2, bassOct:0.5 },
+
+        // Lvl 2 — Solar Flare: warm swinging groove, D dorian
+        { bpm: 135, scale: [146.83,164.81,174.61,196.00,220.00,246.94,261.63],
+          melody:  [0,-1,3,2, 4,-1,5,4, 2,-1,0,3, 5,-1,4,-1],
+          bass:    [0,-1,-1,0, -1,3,-1,-1, 4,-1,-1,4, -1,0,-1,-1],
+          kick:    [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0],
+          hat:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:500, leadOct:2, bassOct:0.5 },
+
+        // Lvl 3 — Violet Storm: dark descending, E phrygian
+        { bpm: 140, scale: [164.81,174.61,196.00,220.00,246.94,261.63,293.66],
+          melody:  [6,5,4,3, 2,1,0,-1, 6,4,2,0, -1,3,5,6],
+          bass:    [0,0,-1,2, 2,-1,3,3, -1,4,4,-1, 0,-1,2,-1],
+          kick:    [1,0,1,0, 0,0,1,0, 1,0,1,0, 0,0,1,0],
+          hat:     [0,1,0,1, 0,1,0,1, 0,1,0,1, 0,1,0,1],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+          leadWave:'square', bassWave:'square', bassFilter:350, leadOct:2, bassOct:0.5 },
+
+        // Lvl 4 — Toxic Rush: playful bouncing, F major
+        { bpm: 120, scale: [174.61,196.00,220.00,233.08,261.63,293.66,329.63],
+          melody:  [0,4,2,4, 0,5,3,5, 0,6,4,6, 0,4,2,-1],
+          bass:    [0,-1,0,0, -1,3,-1,3, 4,-1,4,4, -1,0,-1,0],
+          kick:    [1,0,0,0, 1,0,0,0, 1,0,1,0, 0,0,0,0],
+          hat:     [1,0,0,1, 1,0,0,1, 1,0,0,1, 1,0,0,1],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'triangle', bassWave:'sawtooth', bassFilter:600, leadOct:2, bassOct:0.5 },
+
+        // Lvl 5 — Crimson Blaze: aggressive stabs, A minor
+        { bpm: 148, scale: [220.00,246.94,261.63,293.66,329.63,349.23,392.00],
+          melody:  [0,-1,-1,4, -1,-1,3,-1, 0,-1,-1,5, -1,-1,4,-1],
+          bass:    [0,0,-1,0, 0,-1,3,3, -1,3,3,-1, 4,4,-1,0],
+          kick:    [1,0,1,0, 0,0,0,0, 1,0,1,0, 0,0,0,0],
+          hat:     [0,0,1,0, 0,0,0,0, 0,0,1,0, 0,0,0,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,1,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:300, leadOct:2, bassOct:0.5 },
+
+        // Lvl 6 — Magenta Pulse: pulsing trance, Bb minor
+        { bpm: 138, scale: [233.08,261.63,277.18,311.13,349.23,369.99,415.30],
+          melody:  [0,0,4,4, 0,0,5,5, 0,0,3,3, 0,0,6,6],
+          bass:    [0,0,0,0, 3,3,3,3, 4,4,4,4, 3,3,3,3],
+          kick:    [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,1,0],
+          hat:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'square', bassWave:'square', bassFilter:450, leadOct:2, bassOct:0.5 },
+
+        // Lvl 7 — Aqua Depths: flowing underwater, C# minor
+        { bpm: 110, scale: [138.59,155.56,164.81,185.00,207.65,220.00,246.94],
+          melody:  [2,3,4,5, 6,5,4,3, 2,1,0,1, 2,3,4,-1],
+          bass:    [0,-1,-1,-1, 0,-1,-1,-1, 3,-1,-1,-1, 4,-1,-1,-1],
+          kick:    [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+          hat:     [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          snare:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'sine', bassWave:'triangle', bassFilter:300, leadOct:2, bassOct:0.5 },
+
+        // Lvl 8 — Frozen Circuit: glitchy stutter, F# minor
+        { bpm: 150, scale: [185.00,207.65,220.00,246.94,277.18,293.66,329.63],
+          melody:  [0,0,-1,3, 3,-1,5,5, -1,4,4,-1, 6,-1,0,0],
+          bass:    [0,0,-1,-1, 3,-1,3,-1, -1,4,-1,4, 0,-1,-1,0],
+          kick:    [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,0,0,0],
+          hat:     [1,1,0,0, 1,0,0,1, 0,1,1,0, 0,0,1,1],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+          leadWave:'square', bassWave:'sawtooth', bassFilter:350, leadOct:2, bassOct:0.5 },
+
+        // Lvl 9 — Gold Rush: triumphant march, G major
+        { bpm: 132, scale: [196.00,220.00,246.94,261.63,293.66,329.63,369.99],
+          melody:  [0,2,4,6, 4,2,0,4, 6,4,2,0, 2,4,6,-1],
+          bass:    [0,-1,0,-1, 2,-1,2,-1, 4,-1,4,-1, 2,-1,0,-1],
+          kick:    [1,0,0,0, 1,0,0,0, 1,0,1,0, 0,0,0,0],
+          hat:     [0,0,1,0, 0,0,1,0, 0,0,1,1, 0,0,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:500, leadOct:2, bassOct:0.5 },
+
+        // Lvl 10 — Phantom Edge: eerie drifting, Bb phrygian
+        { bpm: 118, scale: [233.08,246.94,277.18,311.13,349.23,369.99,415.30],
+          melody:  [0,-1,1,-1, 2,-1,1,-1, 3,-1,2,-1, 1,-1,0,-1],
+          bass:    [0,-1,-1,-1, -1,-1,-1,-1, 3,-1,-1,-1, -1,-1,-1,-1],
+          kick:    [1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          hat:     [0,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,0,0],
+          snare:   [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+          leadWave:'triangle', bassWave:'sine', bassFilter:250, leadOct:1, bassOct:0.5 },
+
+        // Lvl 11 — Electric Dawn: bright climbing, D major
+        { bpm: 142, scale: [146.83,164.81,185.00,196.00,220.00,246.94,277.18],
+          melody:  [0,1,2,3, 4,5,6,5, 4,3,2,1, 0,2,4,6],
+          bass:    [0,-1,1,-1, 2,-1,3,-1, 4,-1,3,-1, 2,-1,0,-1],
+          kick:    [1,0,0,0, 1,0,0,0, 1,0,0,1, 0,0,0,0],
+          hat:     [1,0,1,0, 0,1,1,0, 1,0,1,0, 0,1,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:550, leadOct:2, bassOct:0.5 },
+
+        // Lvl 12 — Cherry Blossom: gentle melody, Eb major
+        { bpm: 112, scale: [155.56,174.61,196.00,207.65,233.08,261.63,293.66],
+          melody:  [4,2,0,-1, 3,5,4,-1, 2,0,2,-1, 4,5,6,-1],
+          bass:    [0,-1,-1,2, -1,-1,4,-1, -1,3,-1,-1, 0,-1,-1,-1],
+          kick:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          hat:     [0,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,0,0],
+          snare:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          leadWave:'sine', bassWave:'triangle', bassFilter:400, leadOct:2, bassOct:0.5 },
+
+        // Lvl 13 — Matrix Code: precise tech, A dorian
+        { bpm: 146, scale: [220.00,246.94,261.63,293.66,329.63,369.99,392.00],
+          melody:  [0,4,0,4, 2,5,2,5, 3,6,3,6, 4,0,4,0],
+          bass:    [0,-1,0,-1, 0,-1,3,-1, 3,-1,3,-1, 3,-1,0,-1],
+          kick:    [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,0,1,0],
+          hat:     [1,0,1,0, 1,0,1,0, 0,1,0,1, 1,0,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'square', bassWave:'square', bassFilter:380, leadOct:2, bassOct:0.5 },
+
+        // Lvl 14 — Sunset Strip: warm groovy, E major
+        { bpm: 124, scale: [164.81,185.00,207.65,220.00,246.94,277.18,311.13],
+          melody:  [0,2,4,-1, 6,4,2,-1, 0,3,5,-1, 6,5,3,-1],
+          bass:    [0,-1,0,0, -1,0,-1,4, 3,-1,3,3, -1,3,-1,0],
+          kick:    [1,0,0,0, 0,0,0,1, 1,0,0,0, 0,0,0,1],
+          hat:     [0,0,1,0, 0,1,0,0, 0,0,1,0, 1,0,0,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'triangle', bassWave:'sawtooth', bassFilter:500, leadOct:2, bassOct:0.5 },
+
+        // Lvl 15 — Shadow Realm: heavy dark, B phrygian
+        { bpm: 136, scale: [246.94,261.63,293.66,329.63,369.99,392.00,440.00],
+          melody:  [0,-1,0,3, -1,0,2,-1, 0,-1,0,4, -1,0,3,-1],
+          bass:    [0,0,-1,0, 0,-1,3,3, -1,3,3,-1, 4,4,-1,0],
+          kick:    [1,0,1,0, 0,0,1,0, 1,0,0,0, 1,0,1,0],
+          hat:     [0,0,1,0, 0,0,0,0, 0,0,1,0, 0,0,0,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:280, leadOct:1, bassOct:0.5 },
+
+        // Lvl 16 — Plasma Core: chaotic energy, Ab minor
+        { bpm: 155, scale: [207.65,233.08,246.94,277.18,311.13,329.63,369.99],
+          melody:  [5,2,6,0, 3,5,1,4, 6,0,3,5, 2,4,1,6],
+          bass:    [0,-1,4,-1, 2,-1,5,-1, 3,-1,6,-1, 1,-1,0,-1],
+          kick:    [1,0,0,1, 0,0,1,0, 0,1,0,0, 1,0,0,1],
+          hat:     [1,0,1,1, 0,1,0,1, 1,1,0,1, 0,1,1,0],
+          snare:   [0,0,0,0, 1,0,0,1, 0,0,0,0, 1,0,1,0],
+          leadWave:'square', bassWave:'square', bassFilter:320, leadOct:2, bassOct:0.5 },
+
+        // Lvl 17 — Arctic Glow: ethereal sparse, Gb major
+        { bpm: 105, scale: [185.00,207.65,233.08,246.94,277.18,311.13,349.23],
+          melody:  [-1,0,-1,4, -1,-1,6,-1, -1,2,-1,5, -1,-1,3,-1],
+          bass:    [0,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, 0,-1,-1,-1],
+          kick:    [1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          hat:     [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          snare:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+          leadWave:'sine', bassWave:'sine', bassFilter:250, leadOct:2, bassOct:0.5 },
+
+        // Lvl 18 — Lava Flow: heavy driving, C# harmonic minor
+        { bpm: 144, scale: [138.59,155.56,164.81,185.00,207.65,220.00,261.63],
+          melody:  [0,0,3,3, 5,5,3,3, 0,0,4,4, 6,6,4,4],
+          bass:    [0,0,-1,0, 3,3,-1,3, 4,4,-1,4, 3,3,-1,0],
+          kick:    [1,0,0,0, 1,0,1,0, 0,0,1,0, 1,0,0,0],
+          hat:     [0,0,1,0, 0,0,1,0, 1,0,1,0, 0,0,1,0],
+          snare:   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:400, leadOct:2, bassOct:0.5 },
+
+        // Lvl 19 — Star Field: dreamy floating, F# dorian
+        { bpm: 115, scale: [185.00,207.65,220.00,246.94,277.18,311.13,329.63],
+          melody:  [0,2,4,6, -1,5,3,1, 0,4,6,5, -1,3,1,0],
+          bass:    [0,-1,-1,2, -1,-1,4,-1, 6,-1,-1,4, -1,-1,2,-1],
+          kick:    [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,1,0],
+          hat:     [0,0,0,1, 0,0,0,0, 0,0,0,1, 0,0,0,0],
+          snare:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,0,0],
+          leadWave:'triangle', bassWave:'triangle', bassFilter:350, leadOct:2, bassOct:0.5 },
+
+        // Lvl 20 — Final Void: epic intense, D harmonic minor
+        { bpm: 160, scale: [146.83,164.81,174.61,196.00,220.00,233.08,277.18],
+          melody:  [0,4,6,4, 0,5,6,5, 0,3,6,3, 0,2,6,2],
+          bass:    [0,-1,0,0, -1,0,-1,0, 4,-1,4,4, -1,4,-1,0],
+          kick:    [1,0,0,0, 1,0,1,0, 1,0,0,0, 1,0,1,0],
+          hat:     [1,0,1,0, 1,0,1,1, 1,0,1,0, 1,1,1,0],
+          snare:   [0,0,0,0, 1,0,0,1, 0,0,0,0, 1,0,1,0],
+          leadWave:'sawtooth', bassWave:'sawtooth', bassFilter:450, leadOct:2, bassOct:0.5 },
+    ],
+
     getMusicConfig(levelIndex) {
-        const lvl = levels[levelIndex];
-        const bpm = Math.min(160, Math.max(120, 100 + lvl.pipeSpeed * 12));
-        const keys = [
-            [130.81, 146.83, 155.56, 174.61, 196.00, 207.65, 233.08], // C minor
-            [146.83, 164.81, 174.61, 196.00, 220.00, 233.08, 261.63], // D minor
-            [164.81, 185.00, 196.00, 220.00, 246.94, 261.63, 293.66], // E minor
-            [174.61, 196.00, 207.65, 233.08, 261.63, 277.18, 311.13], // F minor
-            [196.00, 220.00, 233.08, 261.63, 293.66, 311.13, 349.23], // G minor
-        ];
-        const keyIndex = levelIndex % 5;
-        const scale = keys[keyIndex];
-
-        // Rotating patterns per level
-        const melodyPatterns = [
-            [0,2,4,3, 2,0,4,6, 0,3,5,4, 2,4,6,5],
-            [0,4,2,5, 3,6,4,2, 0,5,3,6, 4,2,0,3],
-            [4,2,0,3, 5,4,2,6, 3,0,4,2, 6,5,3,0],
-            [0,3,6,4, 2,5,0,3, 4,6,2,5, 3,0,4,6],
-        ];
-        const bassPatterns = [
-            [0,-1,0,-1, 2,-1,2,-1, 3,-1,3,-1, 4,-1,4,-1],
-            [0,-1,2,-1, 0,-1,3,-1, 4,-1,2,-1, 0,-1,4,-1],
-            [0,0,-1,2, 2,-1,3,3, -1,4,4,-1, 0,-1,2,-1],
-        ];
-        const kickPatterns = [
-            [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
-            [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0],
-            [1,0,1,0, 0,0,1,0, 1,0,0,0, 1,0,1,0],
-        ];
-        const hatPatterns = [
-            [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0],
-            [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
-            [0,1,0,1, 0,1,0,1, 1,0,1,0, 0,1,1,0],
-        ];
-
-        return {
-            bpm: bpm,
-            scale: scale,
-            melody: melodyPatterns[levelIndex % melodyPatterns.length],
-            bass: bassPatterns[levelIndex % bassPatterns.length],
-            kick: kickPatterns[levelIndex % kickPatterns.length],
-            hat: hatPatterns[levelIndex % hatPatterns.length],
-        };
+        return this._levelConfigs[levelIndex % this._levelConfigs.length];
     },
 
     startMusic(levelIndex) {
@@ -309,6 +450,7 @@ const GDAudio = {
     _scheduleBeat(time, step) {
         const cfg = this._musicConfig;
         if (!cfg) return;
+        const beatDur = 60.0 / this._tempo / 4;
 
         // Kick drum
         if (cfg.kick[step]) {
@@ -323,6 +465,42 @@ const GDAudio = {
             gain.connect(this.musicGain);
             osc.start(time);
             osc.stop(time + 0.12);
+            this._scheduledSources.push(osc);
+        }
+
+        // Snare (noise burst + tone)
+        if (cfg.snare && cfg.snare[step]) {
+            const bufLen = this.ctx.sampleRate * 0.08;
+            const buf = this.ctx.createBuffer(1, bufLen, this.ctx.sampleRate);
+            const d = buf.getChannelData(0);
+            for (let i = 0; i < bufLen; i++) d[i] = (Math.random() * 2 - 1);
+            const src = this.ctx.createBufferSource();
+            src.buffer = buf;
+            const bpf = this.ctx.createBiquadFilter();
+            bpf.type = 'bandpass';
+            bpf.frequency.value = 3000;
+            bpf.Q.value = 0.8;
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0.2, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+            src.connect(bpf);
+            bpf.connect(gain);
+            gain.connect(this.musicGain);
+            src.start(time);
+            src.stop(time + 0.08);
+            this._scheduledSources.push(src);
+            // Snare tone body
+            const osc = this.ctx.createOscillator();
+            const tGain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(200, time);
+            osc.frequency.exponentialRampToValueAtTime(120, time + 0.05);
+            tGain.gain.setValueAtTime(0.15, time);
+            tGain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+            osc.connect(tGain);
+            tGain.connect(this.musicGain);
+            osc.start(time);
+            osc.stop(time + 0.06);
             this._scheduledSources.push(osc);
         }
 
@@ -348,20 +526,20 @@ const GDAudio = {
             this._scheduledSources.push(src);
         }
 
-        // Bass
+        // Bass — per-level wave type and filter
         if (cfg.bass[step] >= 0) {
             const noteIdx = cfg.bass[step] % cfg.scale.length;
-            const freq = cfg.scale[noteIdx] * 0.5; // One octave below
+            const freq = cfg.scale[noteIdx] * (cfg.bassOct || 0.5);
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
-            osc.type = 'sawtooth';
+            osc.type = cfg.bassWave || 'sawtooth';
             osc.frequency.value = freq;
-            const dur = 60.0 / this._tempo / 4 * 0.8;
+            const dur = beatDur * 0.8;
             gain.gain.setValueAtTime(0.18, time);
             gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
             const lpf = this.ctx.createBiquadFilter();
             lpf.type = 'lowpass';
-            lpf.frequency.value = 400;
+            lpf.frequency.value = cfg.bassFilter || 400;
             osc.connect(lpf);
             lpf.connect(gain);
             gain.connect(this.musicGain);
@@ -370,15 +548,15 @@ const GDAudio = {
             this._scheduledSources.push(osc);
         }
 
-        // Lead melody
+        // Lead melody — per-level wave type and octave
         const noteIdx = cfg.melody[step];
         if (noteIdx >= 0) {
-            const freq = cfg.scale[noteIdx % cfg.scale.length] * 2; // One octave above
+            const freq = cfg.scale[noteIdx % cfg.scale.length] * (cfg.leadOct || 2);
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
-            osc.type = 'square';
+            osc.type = cfg.leadWave || 'square';
             osc.frequency.value = freq;
-            const dur = 60.0 / this._tempo / 4 * 0.6;
+            const dur = beatDur * 0.6;
             gain.gain.setValueAtTime(0.08, time);
             gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
             osc.connect(gain);
